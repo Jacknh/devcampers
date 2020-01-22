@@ -1,0 +1,19 @@
+{
+  "name": "dev-campers",
+  "version": "1.0.0",
+  "description": "a project from a udemy course",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=prod node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "jack zhang",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
