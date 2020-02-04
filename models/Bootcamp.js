@@ -98,7 +98,16 @@ const BootcampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  toJSON: { virtuals: true }
 });
+
+BootcampSchema.virtual('courses', {
+  ref: 'Course',
+  localField: '_id',
+  foreignField: 'bootcamp',
+  justOne: false
+})
 
 BootcampSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
