@@ -1,10 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
-const colors = require('colors');
+const colors = require("colors");
 const bootcamps = require("./routes/bootcamps");
-const connect = require('./config/db')
-const errorHandler = require('./middlewares/error')
+const courses = require("./routes/courses");
+const connect = require("./config/db");
+const errorHandler = require("./middlewares/error");
 
 dotenv.config({ path: "./.env" });
 
@@ -18,11 +19,13 @@ if (process.env.NODE_ENV === "dev") {
 
 app.use(express.json());
 app.use("/api/v1/bootcamps", bootcamps);
-app.use(errorHandler)
-    
+app.use("/api/v1/courses", courses);
+app.use(errorHandler);
+
 app.listen(
   process.env.PORT,
   console.log(
-    `The server is running on port ${process.env.PORT} in ${process.env.NODE_ENV} mode`.yellow
+    `The server is running on port ${process.env.PORT} in ${process.env.NODE_ENV} mode`
+      .yellow
   )
 );
