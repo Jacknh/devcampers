@@ -130,6 +130,12 @@ BootcampSchema.pre('save', async function(next) {
   next()
 })
 
+BootcampSchema.pre('remove', async function(next) {
+  await this.model('Course').deleteMany({bootcamp: this._id})
+  console.log(`The courses for bootcamp ${this._id} also being removed`.red)
+  next();
+})
+
 const Bootcamp = mongoose.model('Bootcamp', BootcampSchema)
 
 module.exports = Bootcamp

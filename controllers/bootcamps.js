@@ -89,7 +89,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id).populate('courses');
   if (!bootcamp) {
     next(
       new ErrorResponse(
@@ -98,6 +98,7 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
       )
     );
   } else {
+    await bootcamp.remove()
     res.status(200).json({ data: bootcamp });
   }
 });
