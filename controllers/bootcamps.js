@@ -62,13 +62,13 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
       )
     );
   } else {
-    res.status(200).json({ data: bootcamp });
+    res.status(200).json({ success: true, data: bootcamp });
   }
 });
 
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
   const data = await Bootcamp.create(req.body);
-  res.status(200).json({ msg: "Create a new bootcamp", data });
+  res.status(200).json({ success: true, data });
 });
 
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
@@ -84,7 +84,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
       )
     );
   } else {
-    res.status(200).json({ data: bootcamp });
+    res.status(200).json({ success: true, data: bootcamp });
   }
 });
 
@@ -99,7 +99,7 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
     );
   } else {
     await bootcamp.remove()
-    res.status(200).json({ data: bootcamp });
+    res.status(200).json({ success: true, data: bootcamp });
   }
 });
 
