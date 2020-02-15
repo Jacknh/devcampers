@@ -5,52 +5,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const geocoder = require("../utils/geocoder");
 
 exports.getBootcamps = asyncHandler(async (req, res) => {
-  var reqQuery = { ...req.query };
-  let noQueryFields = ["select", "sort", "limit", "page"];
-  noQueryFields.forEach(field => delete reqQuery[field]);
-
-  let queryStr = JSON.stringify(reqQuery);
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-
-  let query = Bootcamp.find(JSON.parse(queryStr)).populate("courses");
-
-  if (req.query.select) {
-    let selectedStr = req.query.select.split(",").join(" ");
-    query = query.select(selectedStr);
-  }
-  if (req.query.sort) {
-    let sortBy = req.query.sort.split(",").join(" ");
-    query = query.sort(sortBy);
-  }
-
-  let limit = parseInt(req.query.limit) || 20;
-  let page = parseInt(req.query.page) || 1;
-  let pagination = {};
-  let total = await Bootcamp.countDocuments();
-
-  if (page * limit < total) {
-    pagination.next = {
-      page: page + 1,
-      limit
-    };
-  }
-  if (page > 1) {
-    pagination.prev = {
-      page: page - 1,
-      limit
-    };
-  }
-
-  query = query.skip((page - 1) * limit).limit(limit);
-
-  const bootcamps = await query;
-
-  res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    pagination,
-    data: bootcamps
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
