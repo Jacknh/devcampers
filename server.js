@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const fileupload = require('express-fileupload');
 const colors = require("colors");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
@@ -18,6 +19,8 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 app.use(express.json());
+app.use(express.static('public'));
+app.use(fileupload());
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
 app.use(errorHandler);
