@@ -1,5 +1,7 @@
+const crypto = require("crypto");
 const asyncHandler = require("../utils/asyncHandler");
 const ErrorResponse = require("../utils/errorResponse");
+const sendEmail = require("../utils/sendEmail");
 const User = require("../models/User");
 
 // @desc    Register user
@@ -67,5 +69,69 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route   GET /me
 // @access  Private
 exports.getMe = (req, res, next) => {
-  res.status(200).json({ success: true, data: req.user })
-}
+  res.status(200).json({ success: true, data: req.user });
+};
+
+// @desc    Forgot password
+// @route   POST /forgotpassword
+// @access  Public
+exports.forgotPassword = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse("There is no user with the email"));
+  }
+
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${req.protocol}://${req.hostname}:${process.env.PORT}/api/v1/auth/resetpassword/${resetToken}`;
+
+  const text = `You received the email to reset your password, please click this: \n\n ${resetUrl}`;
+
+  try {
+    await sendEmail({
+      to: req.body.email,
+      text
+    });
+
+    res.status(200).json({ success: true, data: "Email sent" });
+  } catch (error) {
+    console.log(error);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new ErrorResponse("Could not send email to reset password", 500)
+    );
+  }
+};
+
+// @desc    Reset password
+// @route   PUT /resetpassword/:resettoken
+// @access  Public
+exports.resetPassword = async (req, res, next) => {
+  const hashedResetToken = crypto
+    .createHash("sha256")
+    .update(req.params.resettoken)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedResetToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse("Invalid token", 400));
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  res.status(200).json({ success: true, data: "Password reset success" });
+};
