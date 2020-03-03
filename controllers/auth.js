@@ -135,3 +135,35 @@ exports.resetPassword = async (req, res, next) => {
 
   res.status(200).json({ success: true, data: "Password reset success" });
 };
+
+// @desc    Update user details(email, name)
+// @route   PUT /updatedetails
+// @access  Private
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    { email: req.body.email, name: req.body.name },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({data: user})
+});
+
+// @desc    Update user password
+// @route   PUT /updatepassword
+// @access  Private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  const validPassword = await user.matchPassword(req.body.currentPassword);
+
+  if (!validPassword) {
+    return next(new ErrorResponse('The current password is not valid', 401));
+  }
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+
+  res.status(200).json({data: 'Password changed'})
+})
