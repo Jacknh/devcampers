@@ -31,7 +31,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Login user
-// @route   POST /login
+// @route   POST /api/v1/auth/login
 // @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -64,6 +64,13 @@ exports.login = asyncHandler(async (req, res, next) => {
     })
     .json({ success: true, token });
 });
+
+// @desc    Logout user
+// @route   GET /api/v1/auth/logout
+// @access  Private
+exports.logout = (req, res, next) => {
+  res.status(200).json({token: ''})
+}
 
 // @desc    Get the current logged in user
 // @route   GET /me
