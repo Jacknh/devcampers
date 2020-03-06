@@ -51,6 +51,7 @@ ReviewSchema.statics.getAverageRating = async function(bootcampId) {
 
   try {
     let averageRating = res[0].averageRating;
+    console.log(averageRating)
     await this.model("Bootcamp").findByIdAndUpdate(
       bootcampId,
       { averageRating },
@@ -66,8 +67,8 @@ ReviewSchema.post("save", async function() {
   await this.constructor.getAverageRating(this.bootcamp);
 });
 
-ReviewSchema.pre("remove", async function() {
-  await this.constructor.getAverageRating(this.bootcamp);
+ReviewSchema.pre("remove", function() {
+  this.constructor.getAverageRating(this.bootcamp);
 });
 
 module.exports = mongoose.model("Review", ReviewSchema);
