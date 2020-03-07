@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
   // Id form is incorrect error
   if (err.name === "CastError") {
     error = new ErrorResponse(
-      `Resource not found with the id of ${err.value}`,
+      'Resource not found',
       400
     );
   }
