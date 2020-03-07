@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const connect = async () => {
-  const conn = await mongoose.connect("mongodb://localhost:27017/devcamper", {
+  const conn = await mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
